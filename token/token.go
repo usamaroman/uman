@@ -16,6 +16,10 @@ const (
 	COLON     = ":"
 	COMMA     = ","
 	SEMICOLON = ";"
+	LPAREN    = "("
+	RPAREN    = ")"
+	LBRACE    = "{"
+	RBRACE    = "}"
 
 	STRING = "STRING"
 	INT    = "INT"

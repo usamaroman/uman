@@ -7,7 +7,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `:=;,+-*/  true истина`
+	input := `:=;,+-*/ () { } true истина`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -21,6 +21,10 @@ func TestNextToken(t *testing.T) {
 		{token.MINUS, "-"},
 		{token.ASTERISK, "*"},
 		{token.SLACH, "/"},
+		{token.LPAREN, "("},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RBRACE, "}"},
 		{token.IDENT, "true"},
 		{token.TRUE, "истина"},
 	}
