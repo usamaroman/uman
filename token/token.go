@@ -8,10 +8,17 @@ const (
 	EOF     = "EOF"
 
 	ASSIGN   = "="
+	EQUALS   = "=="
 	PLUS     = "+"
 	MINUS    = "-"
 	ASTERISK = "*"
-	SLACH    = "/"
+	SLASH    = "/"
+	GT       = ">"
+	EGT      = ">="
+	LT       = "<"
+	ELT      = "<="
+	BANG     = "!"
+	NEQ      = "!="
 
 	COLON     = ":"
 	COMMA     = ","
