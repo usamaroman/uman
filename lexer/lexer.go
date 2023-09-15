@@ -1,18 +1,21 @@
 package lexer
 
 import (
+	"unicode"
+
 	"uman/token"
 )
 
 type Lexer struct {
-	input        string
+	input        []rune
 	position     int // current position in input (points to current char)
 	readPosition int // current reading position in input (after current char)
-	ch           byte
+	ch           rune
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	in := []rune(input)
+	l := &Lexer{input: in}
 	l.readChar()
 	return l
 }
@@ -26,7 +29,7 @@ func (l *Lexer) NextToken() token.Token {
 	case ':':
 		tok = token.New(token.COLON, l.ch)
 	case '!':
-		if l.peekChar() == '=' {
+		if l.peekRune() == '=' {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{
@@ -37,7 +40,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok = token.New(token.BANG, l.ch)
 		}
 	case '=':
-		if l.peekChar() == '=' {
+		if l.peekRune() == '=' {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{
@@ -68,7 +71,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '/':
 		tok = token.New(token.SLASH, l.ch)
 	case '>':
-		if l.peekChar() == '=' {
+		if l.peekRune() == '=' {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{Type: token.EGT, Literal: string(ch) + string(l.ch)}
@@ -76,7 +79,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok = token.New(token.GT, l.ch)
 		}
 	case '<':
-		if l.peekChar() == '=' {
+		if l.peekRune() == '=' {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{Type: token.ELT, Literal: string(ch) + string(l.ch)}
@@ -114,7 +117,7 @@ func (l *Lexer) readIdentifier() string {
 		l.readChar()
 	}
 
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) readDigit() string {
@@ -123,15 +126,15 @@ func (l *Lexer) readDigit() string {
 		l.readChar()
 	}
 
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
-func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+func isLetter(ch rune) bool {
+	return unicode.Is(unicode.Cyrillic, ch) || unicode.Is(unicode.Latin, ch)
 }
 
-func isDigit(ch byte) bool {
-	return '0' <= ch && ch <= '9'
+func isDigit(ch rune) bool {
+	return unicode.IsDigit(ch)
 }
 
 func (l *Lexer) readChar() {
@@ -153,14 +156,14 @@ func (l *Lexer) readString() string {
 			break
 		}
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
-func (l *Lexer) peekChar() byte {
+func (l *Lexer) peekRune() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
 	} else {
-		return l.input[l.readPosition]
+		return byte(l.input[l.readPosition])
 	}
 }
 

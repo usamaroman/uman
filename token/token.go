@@ -54,7 +54,7 @@ type Token struct {
 	Literal string
 }
 
-func New(tokenType TokenType, literal byte) Token {
+func New(tokenType TokenType, literal rune) Token {
 	return Token{
 		Type:    tokenType,
 		Literal: string(literal),

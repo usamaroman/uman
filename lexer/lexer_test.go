@@ -10,7 +10,8 @@ func TestNextToken(t *testing.T) {
 	input := `:= == != ;,+-*/
 () { } 
 <=	> < >=
-true = "true"
+true = "true" 
+тест = "тест"
 истина`
 
 	tests := []struct {
@@ -38,6 +39,9 @@ true = "true"
 		{token.IDENT, "true"},
 		{token.ASSIGN, "="},
 		{token.STRING, "true"},
+		{token.IDENT, "тест"},
+		{token.ASSIGN, "="},
+		{token.STRING, "тест"},
 		{token.TRUE, "истина"},
 	}
 
