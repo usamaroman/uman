@@ -2,6 +2,13 @@
 
 Uman -- programming language in Russian language for teaching children programming basics  
 
+
+## собрать проект 
+
+```
+    make build
+```
+
 ### Типы данных:
 целое8
 целое16
@@ -14,8 +21,6 @@ Uman -- programming language in Russian language for teaching children programmi
 строка
 символ
 буль
-
-### Переменные: 
 
 
 ### Синтаксис:
