@@ -156,6 +156,7 @@ func (l *Lexer) readString() string {
 			break
 		}
 	}
+
 	return string(l.input[position:l.position])
 }
 

@@ -15,24 +15,19 @@ import (
 var ErrWrongExtension = errors.New("wrong file extension")
 
 func Run() {
+	const prompt = ">> "
 	scanner := bufio.NewScanner(os.Stdin)
 
-	for {
-		fmt.Printf(">> ")
-
-		if scanned := scanner.Scan(); !scanned {
-			log.Printf("Repl line is empty")
-			return
-		}
-
-		line := scanner.Text()
-
-		l := lexer.New(line)
+	for scanner.Scan() {
+		text := scanner.Text()
+		l := lexer.New(text)
 
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+			fmt.Println(prompt, tok)
 		}
+
 	}
+
 }
 
 func ReadFile(filename string) {
