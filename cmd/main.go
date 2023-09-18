@@ -13,7 +13,7 @@ func main() {
 	args := os.Args
 	switch len(args) {
 	case 1:
-		log.Println("run REPL")
+		repl.Run()
 	case 2:
 		repl.ReadFile(args[1])
 	default:
