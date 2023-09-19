@@ -51,12 +51,14 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.currToken.Type {
 	case token.IDENT:
 		return p.parseVariableStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
 }
 
-func (p *Parser) parseVariableStatement() ast.Statement {
+func (p *Parser) parseVariableStatement() *ast.VariableStatement {
 	stmt := &ast.VariableStatement{}
 
 	stmt.Ident = &ast.Identifier{
@@ -88,6 +90,20 @@ func (p *Parser) parseVariableStatement() ast.Statement {
 	}
 
 	log.Println(stmt.Ident.Value, stmt.Token, stmt.DataType, "=", stmt.Value)
+	return stmt
+}
+
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{
+		Token: p.currToken,
+	}
+
+	p.nextToken()
+
+	for !p.currTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
 	return stmt
 }
 
