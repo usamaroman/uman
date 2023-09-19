@@ -87,7 +87,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok = token.New(token.LT, l.ch)
 		}
 	case '"':
-		tok.Type = token.STRING
+		tok.Type = token.STRING_VAL
 		tok.Literal = l.readString()
 	case 0:
 		tok.Literal = ""
@@ -99,7 +99,7 @@ func (l *Lexer) NextToken() token.Token {
 			return tok
 		} else if isDigit(l.ch) {
 			tok.Literal = l.readDigit()
-			tok.Type = token.INT
+			tok.Type = token.INT_VAL
 			return tok
 		} else {
 			tok = token.New(token.ILLEGAL, l.ch)
