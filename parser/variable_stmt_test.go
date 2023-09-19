@@ -5,17 +5,20 @@ import (
 	"uman/ast"
 )
 
-func TestColonStatements(t *testing.T) {
+func TestVariableStatements(t *testing.T) {
+	// верные выражения 1 3 и последняя, остальные неверно проинициализированы
 	input := `
-текст: строка = "тест";
-number: число = 5;
-номер: число = 5;
+текст: строка = "тест"; 
 строка: строка = "wasd";
+number: число = 5;
 номер: число ;
+: число ;
 номер строка = 5;
+номер: число = 5;
 `
-	parser := New(input)
-	program := parser.ParseProgram()
+
+	p := New(input)
+	program := p.ParseProgram()
 
 	if program == nil {
 		t.Fatalf("returned nil")
