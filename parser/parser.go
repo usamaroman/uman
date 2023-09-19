@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"log"
 
 	"uman/ast"
@@ -13,13 +14,16 @@ type Parser struct {
 
 	currToken token.Token
 	peekToken token.Token
+
+	errors []string
 }
 
 func New(input string) *Parser {
 	l := lexer.New(input)
 
 	p := &Parser{
-		l: l,
+		l:      l,
+		errors: make([]string, 0),
 	}
 
 	p.nextToken()
@@ -46,7 +50,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.currToken.Type {
 	case token.IDENT:
-		//case token.COLON:
 		return p.parseVariableStatement()
 	default:
 		return nil
@@ -67,8 +70,11 @@ func (p *Parser) parseVariableStatement() ast.Statement {
 
 	stmt.Token = p.currToken
 
-	if !p.expectPeek(token.STRING) && !p.expectPeek(token.INT) {
+	if p.getDataType() != token.STRING && p.getDataType() != token.INT {
+		p.addError("missing data type")
 		return nil
+	} else {
+		p.nextToken()
 	}
 
 	stmt.DataType = p.currToken.Type
@@ -103,6 +109,25 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		p.nextToken()
 		return true
 	} else {
+		p.peekError(t)
 		return false
 	}
+}
+
+func (p *Parser) getDataType() token.TokenType {
+	return p.peekToken.Type
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
+		t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) addError(msg string) {
+	p.errors = append(p.errors, msg)
 }

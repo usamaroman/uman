@@ -2,29 +2,30 @@ package parser
 
 import (
 	"testing"
+
 	"uman/ast"
 )
 
 func TestVariableStatements(t *testing.T) {
-	// верные выражения 1 3 и последнее, остальные неверно проинициализированы
+
 	input := `
-текст: строка = "тест"; 
+текст: строка = "тест";
 строка: строка = "wasd";
 number: число = 5;
-номер: число ;
-: число ;
-номер строка = 5;
+номер: число = ;
+номер: строка = 5;
 номер: число = 5;
-`
+	`
 
 	p := New(input)
 	program := p.ParseProgram()
+	checkParserErrors(t, p)
 
 	if program == nil {
 		t.Fatalf("returned nil")
 	}
 
-	if len(program.Statements) != 3 {
+	if len(program.Statements) != 5 {
 		t.Fatalf("wrong len, got length=%d", len(program.Statements))
 	}
 
@@ -69,4 +70,16 @@ func testVariableStatement(t *testing.T, stmt ast.Statement, name string) bool {
 	}
 
 	return true
+}
+
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	if len(errors) == 0 {
+		return
+	}
+	t.Errorf("parser has %d errors", len(errors))
+	for _, msg := range errors {
+		t.Errorf("parser error: %q", msg)
+	}
+	t.FailNow()
 }
