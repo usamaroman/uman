@@ -71,6 +71,8 @@ func (p *Parser) parseVariableStatement() ast.Statement {
 		return nil
 	}
 
+	stmt.DataType = p.currToken.Type
+
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
@@ -79,7 +81,7 @@ func (p *Parser) parseVariableStatement() ast.Statement {
 		p.nextToken()
 	}
 
-	log.Println(stmt.Token, stmt.Ident, stmt.Value)
+	log.Println(stmt.Ident.Value, stmt.Token, stmt.DataType, "=", stmt.Value)
 	return stmt
 }
 
