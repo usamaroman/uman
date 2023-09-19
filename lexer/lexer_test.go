@@ -11,7 +11,9 @@ func TestNextToken(t *testing.T) {
 () { } 
 <=	> < >=
 true = "true" 
-тест = "тест"
+тест: строка = "тест"
+номер: число = 5
+5 6
 истина`
 
 	tests := []struct {
@@ -38,10 +40,21 @@ true = "true"
 		{token.EGT, ">="},
 		{token.IDENT, "true"},
 		{token.ASSIGN, "="},
-		{token.STRING, "true"},
+		{token.STRING_VAL, "true"},
 		{token.IDENT, "тест"},
+		{token.COLON, ":"},
+		{token.STRING, "строка"},
 		{token.ASSIGN, "="},
-		{token.STRING, "тест"},
+		{token.STRING_VAL, "тест"},
+
+		{token.IDENT, "номер"},
+		{token.COLON, ":"},
+		{token.INT, "число"},
+		{token.ASSIGN, "="},
+		{token.INT_VAL, "5"},
+
+		{token.INT_VAL, "5"},
+		{token.INT_VAL, "6"},
 		{token.TRUE, "истина"},
 	}
 

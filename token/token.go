@@ -28,8 +28,8 @@ const (
 	LBRACE    = "{"
 	RBRACE    = "}"
 
-	STRING = "STRING"
-	INT    = "INT"
+	STRING_VAL = "STRING_VAL"
+	INT_VAL    = "INT_VAL"
 
 	// Keywords
 	FUNCTION = "FUNCTION"
@@ -38,6 +38,8 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
+	INT      = "INT"
+	STRING   = "STRING"
 )
 
 var keywords = map[string]TokenType{
@@ -47,6 +49,8 @@ var keywords = map[string]TokenType{
 	"если":    IF,
 	"иначе":   ELSE,
 	"вернуть": RETURN,
+	"число":   INT,
+	"строка":  STRING,
 }
 
 type Token struct {
