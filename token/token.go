@@ -20,6 +20,7 @@ const (
 	BANG     = "!"
 	NEQ      = "!="
 
+	LET       = "LET"
 	COLON     = ":"
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -42,7 +43,8 @@ const (
 	STRING   = "STRING"
 )
 
-var keywords = map[string]TokenType{
+var Keywords = map[string]TokenType{
+	"создать": LET,
 	"функция": FUNCTION,
 	"истина":  TRUE,
 	"ложь":    FALSE,
@@ -66,7 +68,7 @@ func New(tokenType TokenType, literal rune) Token {
 }
 
 func LookupIdent(literal string) TokenType {
-	if tok, ok := keywords[literal]; ok {
+	if tok, ok := Keywords[literal]; ok {
 		return tok
 	}
 	return IDENT

@@ -25,9 +25,7 @@ func Run() {
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
 			fmt.Println(prompt, tok)
 		}
-
 	}
-
 }
 
 func ReadFile(filename string) {
