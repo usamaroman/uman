@@ -9,13 +9,13 @@ import (
 func TestVariableStatements(t *testing.T) {
 
 	input := `
-текст: строка = "тест";
+создать текст: строка = "тест";
 строка: строка = "wasd";
-number: число = 5;
-номер: число = ;
+создать number: число = 5;
+создать номер: число = ;
 номер: строка = 5;
 номер: число = 5;
-	`
+`
 
 	p := New(input)
 	program := p.ParseProgram()
@@ -25,7 +25,7 @@ number: число = 5;
 		t.Fatalf("returned nil")
 	}
 
-	if len(program.Statements) != 5 {
+	if len(program.Statements) != 3 {
 		t.Fatalf("wrong len, got length=%d", len(program.Statements))
 	}
 
@@ -39,7 +39,6 @@ number: число = 5;
 
 	for i, tt := range tests {
 		stmt := program.Statements[i]
-
 		if !testVariableStatement(t, stmt, tt.expectedIdentifier) {
 			return
 		}
@@ -48,8 +47,8 @@ number: число = 5;
 }
 
 func testVariableStatement(t *testing.T, stmt ast.Statement, name string) bool {
-	if stmt.TokenLiteral() != ":" {
-		t.Errorf("s.TokenLiteral not 'let'. got=%q", stmt.TokenLiteral())
+	if stmt.TokenLiteral() != "создать" {
+		t.Errorf("s.TokenLiteral not 'создать'. got=%q", stmt.TokenLiteral())
 		return false
 	}
 
