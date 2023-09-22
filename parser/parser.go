@@ -78,6 +78,7 @@ func New(input string) *Parser {
 
 	p.registerPrefixFn(token.IDENT, p.parseIdent)
 	p.registerPrefixFn(token.INT_VAL, p.parseIntegerLiteral)
+	p.registerPrefixFn(token.STRING_VAL, p.parseStringLiteral)
 	p.registerPrefixFn(token.BANG, p.parsePrefixExpression)
 	p.registerPrefixFn(token.MINUS, p.parsePrefixExpression)
 
@@ -160,8 +161,11 @@ func (p *Parser) parseVariableStatement() *ast.VariableStatement {
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
+	p.nextToken()
 
-	for !p.currTokenIs(token.SEMICOLON) {
+	stmt.Value = p.parseExpression(LOWEST)
+
+	if !p.currTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
 
@@ -175,7 +179,9 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	}
 	p.nextToken()
 
-	for !p.currTokenIs(token.SEMICOLON) {
+	stmt.Value = p.parseExpression(LOWEST)
+
+	if !p.currTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
 
@@ -274,6 +280,15 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	lit.Value = i
 
 	return lit
+}
+
+func (p *Parser) parseStringLiteral() ast.Expression {
+	expression := &ast.StringLiteral{
+		Token: p.currToken,
+		Value: p.currToken.Literal,
+	}
+
+	return expression
 }
 
 func (p *Parser) parsePrefixExpression() ast.Expression {
