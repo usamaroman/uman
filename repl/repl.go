@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
 
-	"uman/lexer"
-	"uman/token"
+	"uman/parser"
 )
 
 var ErrWrongExtension = errors.New("wrong file extension")
@@ -17,14 +17,26 @@ var ErrWrongExtension = errors.New("wrong file extension")
 func Run() {
 	const prompt = ">> "
 	scanner := bufio.NewScanner(os.Stdin)
+	out := os.Stdout
 
-	for scanner.Scan() {
-		text := scanner.Text()
-		l := lexer.New(text)
-
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Println(prompt, tok)
+	for {
+		fmt.Printf(prompt)
+		scanned := scanner.Scan()
+		if !scanned {
+			return
 		}
+
+		line := scanner.Text()
+		p := parser.New(line)
+
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
+		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
 	}
 }
 
@@ -40,17 +52,25 @@ func ReadFile(filename string) {
 	}
 
 	scanner := bufio.NewScanner(file)
+	out := os.Stdout
+
 	for {
-		if ok := scanner.Scan(); !ok {
-			os.Exit(1)
+		scanned := scanner.Scan()
+		if !scanned {
+			return
 		}
 
-		input := scanner.Text()
-		l := lexer.New(input)
+		line := scanner.Text()
+		p := parser.New(line)
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
 		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
 	}
 
 }
@@ -62,5 +82,11 @@ func readFileExtension(filename string) error {
 		return nil
 	default:
 		return ErrWrongExtension
+	}
+}
+
+func printParserErrors(out io.Writer, errors []string) {
+	for _, msg := range errors {
+		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
