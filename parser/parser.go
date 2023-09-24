@@ -79,8 +79,11 @@ func New(input string) *Parser {
 	p.registerPrefixFn(token.IDENT, p.parseIdent)
 	p.registerPrefixFn(token.INT_VAL, p.parseIntegerLiteral)
 	p.registerPrefixFn(token.STRING_VAL, p.parseStringLiteral)
+	p.registerPrefixFn(token.TRUE, p.parseBoolean)
+	p.registerPrefixFn(token.FALSE, p.parseBoolean)
 	p.registerPrefixFn(token.BANG, p.parsePrefixExpression)
 	p.registerPrefixFn(token.MINUS, p.parsePrefixExpression)
+	p.registerPrefixFn(token.LPAREN, p.parseGroupedExpression)
 
 	p.registerInfixFn(token.PLUS, p.parseInfixExpression)
 	p.registerInfixFn(token.MINUS, p.parseInfixExpression)
@@ -321,4 +324,24 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 	msg := fmt.Sprintf("no prefix parse function for %s found", t)
 	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) parseBoolean() ast.Expression {
+	exp := &ast.BooleanLiteral{
+		Token: p.currToken,
+		Value: p.currTokenIs(token.TRUE),
+	}
+	return exp
+}
+
+func (p *Parser) parseGroupedExpression() ast.Expression {
+	p.nextToken()
+
+	exp := p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return exp
 }
