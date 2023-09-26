@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"uman/evaluator"
 
 	"uman/parser"
 )
@@ -35,8 +36,17 @@ func Run() {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			_, err := io.WriteString(out, evaluated.Inspect())
+			if err != nil {
+				return
+			}
+			_, err = io.WriteString(out, "\n")
+			if err != nil {
+				return
+			}
+		}
 	}
 }
 
@@ -69,8 +79,17 @@ func ReadFile(filename string) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			_, err := io.WriteString(out, evaluated.Inspect())
+			if err != nil {
+				return
+			}
+			_, err = io.WriteString(out, "\n")
+			if err != nil {
+				return
+			}
+		}
 	}
 
 }
