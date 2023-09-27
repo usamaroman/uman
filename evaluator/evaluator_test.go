@@ -152,3 +152,141 @@ func TestBangOperator(t *testing.T) {
 		testBooleanObject(t, evaluated, tt.expected)
 	}
 }
+
+func TestIfElseExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{"если ( истина ) { 10 }", 10},
+		{"если ( ложь ) { 10 }", "ничего"},
+		{"если (1) { 10 }", 10},
+		{"если (1 < 2) { 10 }", 10},
+		{"если (1 > 2) { 10 }", "ничего"},
+		{"если (1 > 2) { 10 } иначе { 20 }", 20},
+		{"если (1 < 2) { 10 } иначе { 20 }", 10},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		num, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(num))
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
+
+}
+
+func testNullObject(t *testing.T, obj object.Object) bool {
+	if obj != NULL {
+		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
+		return false
+	}
+	return true
+}
+
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"вернуть 10;", 10},
+		{"вернуть 10; 9;", 10},
+		{"вернуть 2 * 5; 9;", 10},
+		{"9; вернуть 2 * 5; 9;", 10},
+		{
+			`
+			if (10 > 1) {
+				if (10 > 1) {
+				    вернуть 10;
+				}
+				вернуть 1;
+			}
+			`, 10,
+		},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testIntegerObject(t, evaluated, tt.expected)
+	}
+}
+
+func TestErrorHandling(t *testing.T) {
+	tests := []struct {
+		input           string
+		expectedMessage string
+	}{
+		{
+			"5 + истина;",
+			"разные типы: INTEGER + BOOLEAN",
+		},
+		{
+			"5 + истина; 5;",
+			"разные типы: INTEGER + BOOLEAN",
+		},
+		{
+			"-истина",
+			"неизвестный оператор: -BOOLEAN",
+		},
+		{
+			"истина + ложь;",
+			"неизвестный оператор: BOOLEAN + BOOLEAN",
+		},
+		{
+			"5; истина + ложь; 5",
+			"неизвестный оператор: BOOLEAN + BOOLEAN",
+		},
+		{
+			"если (10 > 1) { истина + ложь; }",
+			"неизвестный оператор: BOOLEAN + BOOLEAN",
+		},
+		{
+			`если (10 > 1) {
+					  если (10 > 1) {
+						return истина + ложь;
+					  }
+					  вернуть 1;
+					}`,
+			"неизвестный оператор: BOOLEAN + BOOLEAN",
+		},
+		{
+			"тест",
+			"нет переменной: тест",
+		},
+	}
+
+	for i, tt := range tests {
+		evaluated := testEval(tt.input)
+		errObj, ok := evaluated.(*object.Error)
+
+		if !ok {
+			t.Errorf("%d, no error object returned. got=%T(%+v)", i,
+				evaluated, evaluated)
+			continue
+		}
+
+		if errObj.Message != tt.expectedMessage {
+			t.Errorf("%d, wrong error message. expected=%q, got=%q", i,
+				tt.expectedMessage, errObj.Message)
+		}
+
+	}
+}
+
+func TestLetStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let a = 5; a;", 5},
+		{"let a = 5 * 5; a;", 25},
+		{"let a = 5; let b = a; b;", 5},
+		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
+	}
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}

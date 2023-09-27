@@ -72,25 +72,26 @@ func ReadFile(filename string) {
 
 		line := scanner.Text()
 		p := parser.New(line)
-
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
 			printParserErrors(out, p.Errors())
-			continue
 		}
 
-		evaluated := evaluator.Eval(program)
-		if evaluated != nil {
-			_, err := io.WriteString(out, evaluated.Inspect())
-			if err != nil {
-				return
-			}
-			_, err = io.WriteString(out, "\n")
-			if err != nil {
-				return
-			}
-		}
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
 	}
+
+	//evaluated := evaluator.Eval(program)
+	//if evaluated != nil {
+	//	_, err := io.WriteString(out, evaluated.Inspect())
+	//	if err != nil {
+	//		return
+	//	}
+	//	_, err = io.WriteString(out, "\n")
+	//	if err != nil {
+	//		return
+	//	}
+	//}
 
 }
 
