@@ -2,7 +2,6 @@ package evaluator
 
 import (
 	"fmt"
-
 	"uman/ast"
 	"uman/object"
 )
@@ -41,13 +40,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(left) {
 			return left
 		}
-
 		right := Eval(node.Right, env)
 		if isError(right) {
 			return right
 		}
-
 		return evalInfixExpression(node.Operator, left, right)
+
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
 	case *ast.BlockStatement:
@@ -98,15 +96,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	return nil
 }
 
-func applyFunction(function object.Object, args []object.Object) object.Object {
-	fn, ok := function.(*object.Function)
-	if !ok {
-		return newError("нет функции %s", function.Type())
+func applyFunction(fn object.Object, args []object.Object) object.Object {
+	switch fn := fn.(type) {
+	case *object.Function:
+		extendedEnv := extendFunctionEnv(fn, args)
+		evaluated := Eval(fn.Body, extendedEnv)
+		return unwrapReturnValue(evaluated)
+	case *object.Builtin:
+		return fn.Fn(args...)
+	default:
+		return newError("нет функции %s", fn.Type())
 	}
-
-	extendedEnv := extendFunctionEnv(fn, args)
-	evaluated := Eval(fn.Body, extendedEnv)
-	return unwrapReturnValue(evaluated)
 }
 
 func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
@@ -140,11 +140,15 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 }
 
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
-	val, ok := env.Get(node.Value)
-	if !ok {
-		return newError("нет переменной: %s", node.Value)
+	if val, ok := env.Get(node.Value); ok {
+		return val
 	}
-	return val
+
+	if builtin, ok := builtins[node.Value]; ok {
+		return builtin
+	}
+
+	return newError("нет переменной: %s", node.Value)
 }
 
 func evalIfExpression(node *ast.IfExpression, env *object.Environment) object.Object {
@@ -178,6 +182,8 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 	switch {
 	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
 		return evalIntegerInfixExpression(operator, left, right)
+	case left.Type() == object.StringObj && right.Type() == object.StringObj:
+		return evalStringInfixExpression(operator, left, right)
 	case operator == "==":
 		return nativeBoolToBooleanObj(left == right)
 	case operator == "!=":
@@ -187,6 +193,17 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 	default:
 		return newError("неизвестный оператор: %s %s %s", left.Type(), operator, right.Type())
 	}
+}
+
+func evalStringInfixExpression(operator string, left object.Object, right object.Object) object.Object {
+	if operator != "+" {
+		return newError("неизвестный оператор: %s %s %s", left.Type(), operator, right.Type())
+	}
+
+	leftValue := left.(*object.String).Value
+	rightValue := right.(*object.String).Value
+
+	return &object.String{Value: leftValue + rightValue}
 }
 
 func evalIntegerInfixExpression(operator string, left object.Object, right object.Object) object.Object {

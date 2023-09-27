@@ -57,31 +57,33 @@ func ReadFile(filename string) {
 		log.Fatal(err)
 	}
 
-	var input string
+	scanner := bufio.NewScanner(file)
 	out := os.Stdout
 	env := object.NewEnvironment()
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		input += scanner.Text()
-	}
-	log.Println(input)
+	for {
+		scanned := scanner.Scan()
+		if !scanned {
+			return
+		}
 
-	textScanner := bufio.NewScanner(strings.NewReader(input))
-	for textScanner.Scan() {
-		log.Println(textScanner.Text())
-		p := parser.New(textScanner.Text())
+		line := scanner.Text()
+		p := parser.New(line)
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
 			printParserErrors(out, p.Errors())
-			continue
 		}
 
 		evaluated := evaluator.Eval(program, env)
-		log.Println(evaluated)
 		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
+			_, err := io.WriteString(out, evaluated.Inspect())
+			if err != nil {
+				return
+			}
+			_, err = io.WriteString(out, "\n")
+			if err != nil {
+				return
+			}
 		}
 	}
 }

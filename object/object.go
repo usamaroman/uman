@@ -2,6 +2,8 @@ package object
 
 type ObjectType string
 
+type BuiltinFunction func(args ...Object) Object
+
 const (
 	IntegerObj     = "INTEGER"
 	BooleanObj     = "BOOLEAN"
@@ -10,6 +12,7 @@ const (
 	ReturnValueObj = "RETURN_VALUE"
 	ErrorObj       = "ERROR"
 	FunctionObj    = "FUNCTION"
+	BuiltinObj     = "BUILTIN"
 )
 
 type Object interface {

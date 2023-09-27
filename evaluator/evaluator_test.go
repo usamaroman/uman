@@ -215,6 +215,18 @@ func TestReturnStatements(t *testing.T) {
 	}
 }
 
+func TestStringConcatenation(t *testing.T) {
+	input := `"Hello" + " " + "World!"`
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("object is not String. got=%T (%+v)", evaluated, evaluated)
+	}
+	if str.Value != "Hello World!" {
+		t.Errorf("String has wrong value. got=%q", str.Value)
+	}
+}
+
 func TestErrorHandling(t *testing.T) {
 	tests := []struct {
 		input           string
@@ -256,6 +268,10 @@ func TestErrorHandling(t *testing.T) {
 		{
 			"тест",
 			"нет переменной: тест",
+		},
+		{
+			`"Hello" - "World"`,
+			"неизвестный оператор: STRING - STRING",
 		},
 	}
 
@@ -351,4 +367,36 @@ func TestClosures(t *testing.T) {
 рез;
 `
 	testIntegerObject(t, testEval(input), 8)
+}
+
+func TestBuiltinFunctions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{`длина("")`, 0},
+		{`длина("four")`, 4},
+		{`длина("hello world")`, 11},
+		{`длина(1)`, "не подходящий тип данных INTEGER"},
+		{`длина("one", "two")`, "неверное количество аргументов 2, должен быть 1"},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		switch expected := tt.expected.(type) {
+		case int:
+			testIntegerObject(t, evaluated, int64(expected))
+		case string:
+			errObj, ok := evaluated.(*object.Error)
+			if !ok {
+				t.Errorf("object is not Error. got=%T (%+v)",
+					evaluated, evaluated)
+				continue
+			}
+			if errObj.Message != expected {
+				t.Errorf("wrong error message. expected=%q, got=%q",
+					expected, errObj.Message)
+			}
+		}
+	}
 }
