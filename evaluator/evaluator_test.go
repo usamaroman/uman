@@ -10,7 +10,8 @@ import (
 func testEval(input string) object.Object {
 	p := parser.New(input)
 	program := p.ParseProgram()
-	return Eval(program)
+	env := object.NewEnvironment()
+	return Eval(program, env)
 }
 
 func TestEvalIntegerExpression(t *testing.T) {
@@ -246,7 +247,7 @@ func TestErrorHandling(t *testing.T) {
 		{
 			`если (10 > 1) {
 					  если (10 > 1) {
-						return истина + ложь;
+						вернуть истина + ложь;
 					  }
 					  вернуть 1;
 					}`,
@@ -289,4 +290,65 @@ func TestLetStatements(t *testing.T) {
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
 	}
+}
+
+func TestFunctionObject(t *testing.T) {
+	input := "функция(x) { x + 2; };"
+	evaluated := testEval(input)
+
+	fn, ok := evaluated.(*object.Function)
+	if !ok {
+		t.Fatalf("object is not Function. got=%T (%+v)", evaluated, evaluated)
+	}
+
+	if len(fn.Arguments) != 1 {
+		t.Fatalf("function has wrong parameters. Parameters=%+v",
+			fn.Arguments)
+	}
+
+	if fn.Arguments[0].String() != "x" {
+		t.Fatalf("parameter is not 'x'. got=%q", fn.Arguments[0])
+	}
+
+	expectedBody := "(x + 2)"
+	if fn.Body.String() != expectedBody {
+		t.Fatalf("body is not %q. got=%q", expectedBody, fn.Body.String())
+	}
+}
+
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"создать identity: число = функция(x) { x; }; identity(5);", 5},
+		{"создать identity: число = функция(x) { вернуть x; }; identity(5);", 5},
+		{"создать double: число = функция(x) { x * 2; }; double(5);", 10},
+		{"создать add: число = функция(x, y) { x + y; }; add(5, 5);", 10},
+		{"создать add: число = функция(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"функция(x) { x; }(5)", 5},
+	}
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
+func TestClosures(t *testing.T) {
+	input := `
+создать фиб: число = функция(x) {
+	если ( x == 0 ) { 
+		вернуть 0;
+	}
+
+	если ( x == 1 ) { 
+		вернуть 1;
+	}
+	
+	вернуть фиб(x - 2) + фиб(x - 1);
+};
+
+создать рез: число = фиб(6);
+рез;
+`
+	testIntegerObject(t, testEval(input), 8)
 }
