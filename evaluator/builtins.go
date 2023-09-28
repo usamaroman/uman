@@ -1,6 +1,9 @@
 package evaluator
 
-import "uman/object"
+import (
+	"fmt"
+	"uman/object"
+)
 
 var builtins = map[string]*object.Builtin{
 	"длина": &object.Builtin{
@@ -11,10 +14,20 @@ var builtins = map[string]*object.Builtin{
 
 			switch arg := args[0].(type) {
 			case *object.String:
-				return &object.Integer{Value: int64(len(arg.Value))}
+				return &object.Integer{Value: int64(len([]rune(arg.Value)))}
 			default:
 				return newError("не подходящий тип данных %s", args[0].Type())
 			}
+		},
+	},
+
+	"вывести": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
+			}
+
+			return &object.String{Value: ""}
 		},
 	},
 }

@@ -61,30 +61,26 @@ func ReadFile(filename string) {
 	out := os.Stdout
 	env := object.NewEnvironment()
 
+	var line string
+
 	for {
 		scanned := scanner.Scan()
 		if !scanned {
-			return
+			break
 		}
 
-		line := scanner.Text()
-		p := parser.New(line)
-		program := p.ParseProgram()
-		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
-		}
+		line += scanner.Text()
+	}
 
-		evaluated := evaluator.Eval(program, env)
-		if evaluated != nil {
-			_, err := io.WriteString(out, evaluated.Inspect())
-			if err != nil {
-				return
-			}
-			_, err = io.WriteString(out, "\n")
-			if err != nil {
-				return
-			}
-		}
+	p := parser.New(line)
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		printParserErrors(out, p.Errors())
+	}
+
+	evaluated := evaluator.Eval(program, env)
+	if evaluated != nil {
+		fmt.Println(evaluated.Inspect())
 	}
 }
 

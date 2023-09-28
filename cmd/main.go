@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -8,7 +9,7 @@ import (
 )
 
 func main() {
-	log.Println("UMAN")
+	fmt.Println("UMAN - язык программирования")
 
 	args := os.Args
 	switch len(args) {
