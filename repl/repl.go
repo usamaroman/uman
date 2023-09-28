@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 
+	"uman/evaluator"
+	"uman/object"
 	"uman/parser"
 )
 
@@ -18,6 +20,7 @@ func Run() {
 	const prompt = ">> "
 	scanner := bufio.NewScanner(os.Stdin)
 	out := os.Stdout
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(prompt)
@@ -35,8 +38,11 @@ func Run() {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program, env)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
@@ -53,26 +59,29 @@ func ReadFile(filename string) {
 
 	scanner := bufio.NewScanner(file)
 	out := os.Stdout
+	env := object.NewEnvironment()
+
+	var line string
 
 	for {
 		scanned := scanner.Scan()
 		if !scanned {
-			return
+			break
 		}
 
-		line := scanner.Text()
-		p := parser.New(line)
-
-		program := p.ParseProgram()
-		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
-			continue
-		}
-
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		line += scanner.Text()
 	}
 
+	p := parser.New(line)
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		printParserErrors(out, p.Errors())
+	}
+
+	evaluated := evaluator.Eval(program, env)
+	if evaluated != nil {
+		fmt.Println(evaluated.Inspect())
+	}
 }
 
 func readFileExtension(filename string) error {
