@@ -41,6 +41,7 @@ const (
 	RETURN   = "RETURN"
 	INT      = "INT"
 	STRING   = "STRING"
+	BOOL     = "BOOL"
 )
 
 var Keywords = map[string]TokenType{
@@ -53,6 +54,7 @@ var Keywords = map[string]TokenType{
 	"вернуть": RETURN,
 	"число":   INT,
 	"строка":  STRING,
+	"булев":   BOOL,
 }
 
 type Token struct {

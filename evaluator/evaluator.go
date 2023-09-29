@@ -2,6 +2,8 @@ package evaluator
 
 import (
 	"fmt"
+	"uman/token"
+
 	"uman/ast"
 	"uman/object"
 )
@@ -11,6 +13,13 @@ var (
 	TRUE  = &object.Boolean{Value: true}
 	FALSE = &object.Boolean{Value: false}
 )
+
+var dataTypes = map[token.TokenType]object.ObjectType{
+	token.INT:      object.IntegerObj,
+	token.STRING:   object.StringObj,
+	token.BOOL:     object.BooleanObj,
+	token.FUNCTION: object.FunctionObj,
+}
 
 func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf(format, a...)}
@@ -61,6 +70,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
+
+		if !checkDataType(node, val) {
+			return newError("неверная инициализация типа данных %s %s", node.DataType, val.Type())
+		}
+
 		env.Set(node.Ident.Value, val)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
@@ -94,6 +108,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return nil
 	}
 	return nil
+}
+
+func checkDataType(node *ast.VariableStatement, obj object.Object) bool {
+	val, ok := dataTypes[node.DataType]
+	if !ok {
+		return false
+	}
+	return val == obj.Type()
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
