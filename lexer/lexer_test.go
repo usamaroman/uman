@@ -14,7 +14,9 @@ true = "true"
 тест: строка = "тест"
 номер: число = 5
 5 6
-истина`
+истина
+цикл (;)
+`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -46,16 +48,18 @@ true = "true"
 		{token.STRING, "строка"},
 		{token.ASSIGN, "="},
 		{token.STRING_VAL, "тест"},
-
 		{token.IDENT, "номер"},
 		{token.COLON, ":"},
 		{token.INT, "число"},
 		{token.ASSIGN, "="},
 		{token.INT_VAL, "5"},
-
 		{token.INT_VAL, "5"},
 		{token.INT_VAL, "6"},
 		{token.TRUE, "истина"},
+		{token.FOR, "цикл"},
+		{token.LPAREN, "("},
+		{token.SEMICOLON, ";"},
+		{token.RPAREN, ")"},
 	}
 
 	l := New(input)

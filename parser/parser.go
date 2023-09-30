@@ -28,6 +28,7 @@ const (
 var precedences = map[token.TokenType]int{
 	token.EQUALS:   EQUALS,
 	token.NEQ:      EQUALS,
+	token.ASSIGN:   EQUALS,
 	token.LT:       LESSGREATER,
 	token.GT:       LESSGREATER,
 	token.EGT:      LESSGREATER,
@@ -85,8 +86,10 @@ func New(input string) *Parser {
 	p.registerPrefixFn(token.MINUS, p.parsePrefixExpression)
 	p.registerPrefixFn(token.LPAREN, p.parseGroupedExpression)
 	p.registerPrefixFn(token.IF, p.parseIfExpression)
+	p.registerPrefixFn(token.FOR, p.parseForLoopExpression)
 	p.registerPrefixFn(token.FUNCTION, p.parseFunctionLiteral)
 
+	p.registerInfixFn(token.ASSIGN, p.parseInfixExpression)
 	p.registerInfixFn(token.PLUS, p.parseInfixExpression)
 	p.registerInfixFn(token.MINUS, p.parseInfixExpression)
 	p.registerInfixFn(token.ASTERISK, p.parseInfixExpression)
@@ -379,6 +382,31 @@ func (p *Parser) parseIfExpression() ast.Expression {
 
 		exp.Alternative = p.parseBlockStatement()
 	}
+
+	return exp
+}
+
+func (p *Parser) parseForLoopExpression() ast.Expression {
+	exp := &ast.ForLoopExpression{
+		Token: p.currToken,
+	}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+	exp.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	exp.Statement = p.parseBlockStatement()
 
 	return exp
 }

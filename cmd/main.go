@@ -10,6 +10,7 @@ import (
 
 func main() {
 	fmt.Println("UMAN - язык программирования")
+	// TODO: реализовать переприсваивание infix Fn for =
 
 	args := os.Args
 	switch len(args) {

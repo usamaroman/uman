@@ -39,6 +39,7 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
+	FOR      = "FOR"
 	INT      = "INT"
 	STRING   = "STRING"
 	BOOL     = "BOOL"
@@ -52,6 +53,7 @@ var Keywords = map[string]TokenType{
 	"если":    IF,
 	"иначе":   ELSE,
 	"вернуть": RETURN,
+	"цикл":    FOR,
 	"число":   INT,
 	"строка":  STRING,
 	"булев":   BOOL,

@@ -2,7 +2,6 @@ package evaluator
 
 import (
 	"testing"
-
 	"uman/object"
 	"uman/parser"
 )

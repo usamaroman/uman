@@ -2,10 +2,10 @@ package evaluator
 
 import (
 	"fmt"
-	"uman/token"
 
 	"uman/ast"
 	"uman/object"
+	"uman/token"
 )
 
 var (
@@ -53,10 +53,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalInfixExpression(node.Operator, left, right)
+		return evalInfixExpression(node.Operator, left, right, env, node.Left.TokenLiteral())
 
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
+	case *ast.ForLoopExpression:
+		return evalForLoopExpression(node, env)
+
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, env)
 	case *ast.ReturnStatement:
@@ -73,6 +76,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		if !checkDataType(node, val) {
 			return newError("неверная инициализация типа данных %s %s", node.DataType, val.Type())
+		}
+
+		if obj, ok := env.Get(node.Ident.Value); ok {
+			return newError("переменная %s уже существует = %s", node.Ident.Value, obj.Inspect())
 		}
 
 		env.Set(node.Ident.Value, val)
@@ -187,6 +194,23 @@ func evalIfExpression(node *ast.IfExpression, env *object.Environment) object.Ob
 	}
 }
 
+func evalForLoopExpression(node *ast.ForLoopExpression, env *object.Environment) object.Object {
+	condition := Eval(node.Condition, env)
+	if isError(condition) {
+		return condition
+	}
+
+	if condition.Type() != object.BooleanObj {
+		return newError("условие должно быть булевого типа, получено %s", condition.Type())
+	}
+
+	for isTrue(Eval(node.Condition, env)) {
+		Eval(node.Statement, env)
+	}
+
+	return NULL
+}
+
 func isTrue(obj object.Object) bool {
 	switch obj {
 	case TRUE:
@@ -196,12 +220,14 @@ func isTrue(obj object.Object) bool {
 	case NULL:
 		return false
 	default:
-		return true
+		return false
 	}
 }
 
-func evalInfixExpression(operator string, left object.Object, right object.Object) object.Object {
+func evalInfixExpression(operator string, left object.Object, right object.Object, env *object.Environment, ident string) object.Object {
 	switch {
+	case operator == "=":
+		return env.Set(ident, right)
 	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
 		return evalIntegerInfixExpression(operator, left, right)
 	case left.Type() == object.StringObj && right.Type() == object.StringObj:
