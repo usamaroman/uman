@@ -16,6 +16,7 @@ true = "true"
 5 6
 истина
 цикл (;)
+[1, 2]
 `
 
 	tests := []struct {
@@ -60,6 +61,11 @@ true = "true"
 		{token.LPAREN, "("},
 		{token.SEMICOLON, ";"},
 		{token.RPAREN, ")"},
+		{token.LBRACKET, "["},
+		{token.INT_VAL, "1"},
+		{token.COMMA, ","},
+		{token.INT_VAL, "2"},
+		{token.RBRACKET, "]"},
 	}
 
 	l := New(input)

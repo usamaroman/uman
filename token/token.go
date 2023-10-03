@@ -28,6 +28,8 @@ const (
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+	LBRACKET  = "["
+	RBRACKET  = "]"
 
 	STRING_VAL = "STRING_VAL"
 	INT_VAL    = "INT_VAL"

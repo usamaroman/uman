@@ -13,6 +13,7 @@ const (
 	ErrorObj       = "ERROR"
 	FunctionObj    = "FUNCTION"
 	BuiltinObj     = "BUILTIN"
+	ArrayObj       = "ARRAY"
 )
 
 type Object interface {
