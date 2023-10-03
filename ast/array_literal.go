@@ -18,7 +18,7 @@ func (al *ArrayLiteral) TokenLiteral() string {
 func (al *ArrayLiteral) String() string {
 	var out bytes.Buffer
 
-	elements := []string{}
+	elements := make([]string, 0)
 	for _, el := range al.Elements {
 		elements = append(elements, el.String())
 	}

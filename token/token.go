@@ -45,6 +45,7 @@ const (
 	INT      = "INT"
 	STRING   = "STRING"
 	BOOL     = "BOOL"
+	ARRAY    = "ARRAY"
 )
 
 var Keywords = map[string]TokenType{
@@ -59,6 +60,7 @@ var Keywords = map[string]TokenType{
 	"число":   INT,
 	"строка":  STRING,
 	"булев":   BOOL,
+	"массив":  ARRAY,
 }
 
 type Token struct {

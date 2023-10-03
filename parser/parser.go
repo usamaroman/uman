@@ -164,7 +164,7 @@ func (p *Parser) parseVariableStatement() *ast.VariableStatement {
 		return nil
 	}
 
-	if p.getDataType() != token.STRING && p.getDataType() != token.INT && p.getDataType() != token.BOOL && p.getDataType() != token.FUNCTION {
+	if p.getDataType() != token.STRING && p.getDataType() != token.INT && p.getDataType() != token.BOOL && p.getDataType() != token.FUNCTION && p.getDataType() != token.ARRAY {
 		p.addError("missing data type")
 		return nil
 	} else {

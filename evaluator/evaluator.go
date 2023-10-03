@@ -19,6 +19,7 @@ var dataTypes = map[token.TokenType]object.ObjectType{
 	token.STRING:   object.StringObj,
 	token.BOOL:     object.BooleanObj,
 	token.FUNCTION: object.FunctionObj,
+	token.ARRAY:    object.ArrayObj,
 }
 
 func newError(format string, a ...interface{}) *object.Error {

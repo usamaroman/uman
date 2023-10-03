@@ -13,7 +13,7 @@ func (ao *Array) Type() ObjectType { return ArrayObj }
 func (ao *Array) Inspect() string {
 	var out bytes.Buffer
 
-	elements := []string{}
+	elements := make([]string, 0)
 	for _, e := range ao.Elements {
 		elements = append(elements, e.Inspect())
 	}
