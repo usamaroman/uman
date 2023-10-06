@@ -2,7 +2,8 @@ package parser
 
 import (
 	"testing"
-	"uman/ast"
+
+	"github.com/usamaroman/uman/ast"
 )
 
 func TestParsingIndexExpressions(t *testing.T) {

@@ -3,7 +3,7 @@ package lexer
 import (
 	"unicode"
 
-	"uman/token"
+	"github.com/usamaroman/uman/token"
 )
 
 type Lexer struct {

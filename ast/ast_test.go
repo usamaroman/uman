@@ -3,7 +3,8 @@ package ast
 import (
 	"log"
 	"testing"
-	"uman/token"
+
+	"github.com/usamaroman/uman/token"
 )
 
 func TestAst(t *testing.T) {

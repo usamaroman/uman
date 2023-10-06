@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"uman/ast"
+	"github.com/usamaroman/uman/ast"
 )
 
 type Function struct {

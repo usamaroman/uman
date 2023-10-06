@@ -2,7 +2,8 @@ package ast
 
 import (
 	"bytes"
-	"uman/token"
+
+	"github.com/usamaroman/uman/token"
 )
 
 type BlockStatement struct {

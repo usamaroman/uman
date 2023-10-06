@@ -2,7 +2,8 @@ package parser
 
 import (
 	"testing"
-	"uman/ast"
+
+	"github.com/usamaroman/uman/ast"
 )
 
 func TestCallExpressionParsing(t *testing.T) {

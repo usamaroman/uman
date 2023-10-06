@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"uman/ast"
-	"uman/lexer"
-	"uman/token"
+	"github.com/usamaroman/uman/ast"
+	"github.com/usamaroman/uman/lexer"
+	"github.com/usamaroman/uman/token"
 )
 
 type (

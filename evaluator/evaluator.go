@@ -3,9 +3,9 @@ package evaluator
 import (
 	"fmt"
 
-	"uman/ast"
-	"uman/object"
-	"uman/token"
+	"github.com/usamaroman/uman/ast"
+	"github.com/usamaroman/uman/object"
+	"github.com/usamaroman/uman/token"
 )
 
 var (

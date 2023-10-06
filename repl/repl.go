@@ -9,9 +9,9 @@ import (
 	"os"
 	"strings"
 
-	"uman/evaluator"
-	"uman/object"
-	"uman/parser"
+	"github.com/usamaroman/uman/evaluator"
+	"github.com/usamaroman/uman/object"
+	"github.com/usamaroman/uman/parser"
 )
 
 var ErrWrongExtension = errors.New("wrong file extension")

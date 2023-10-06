@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"uman/ast"
+	"github.com/usamaroman/uman/ast"
 )
 
 func TestIdentifierExpression(t *testing.T) {

@@ -3,8 +3,8 @@ package parser
 import (
 	"testing"
 
-	"uman/ast"
-	"uman/token"
+	"github.com/usamaroman/uman/ast"
+	"github.com/usamaroman/uman/token"
 )
 
 func TestVariableStatements(t *testing.T) {

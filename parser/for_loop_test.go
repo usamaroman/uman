@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"uman/ast"
+	"github.com/usamaroman/uman/ast"
 )
 
 func TestForLoopExpression(t *testing.T) {

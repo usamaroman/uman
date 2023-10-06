@@ -1,6 +1,6 @@
 package ast
 
-import "uman/token"
+import "github.com/usamaroman/uman/token"
 
 type IntegerLiteral struct {
 	Token token.Token

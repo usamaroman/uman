@@ -4,12 +4,10 @@ import (
 	"log"
 	"os"
 
-	"uman/repl"
+	"github.com/usamaroman/uman/repl"
 )
 
 func main() {
-	// TODO: реализовать переприсваивание infix Fn for =
-
 	args := os.Args
 	switch len(args) {
 	case 1:

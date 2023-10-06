@@ -3,7 +3,8 @@ package ast
 import (
 	"bytes"
 	"strings"
-	"uman/token"
+
+	"github.com/usamaroman/uman/token"
 )
 
 type CallExpression struct {

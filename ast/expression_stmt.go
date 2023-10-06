@@ -1,6 +1,6 @@
 package ast
 
-import "uman/token"
+import "github.com/usamaroman/uman/token"
 
 type ExpressionStatement struct {
 	Token      token.Token // first token

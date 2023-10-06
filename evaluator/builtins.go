@@ -3,7 +3,7 @@ package evaluator
 import (
 	"fmt"
 
-	"uman/object"
+	"github.com/usamaroman/uman/object"
 )
 
 var builtins = map[string]*object.Builtin{

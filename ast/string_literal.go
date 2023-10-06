@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"uman/token"
+	"github.com/usamaroman/uman/token"
 )
 
 type StringLiteral struct {

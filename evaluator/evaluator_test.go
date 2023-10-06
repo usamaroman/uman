@@ -2,8 +2,9 @@ package evaluator
 
 import (
 	"testing"
-	"uman/object"
-	"uman/parser"
+
+	"github.com/usamaroman/uman/object"
+	"github.com/usamaroman/uman/parser"
 )
 
 func testEval(input string) object.Object {
