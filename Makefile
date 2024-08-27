@@ -1,5 +1,5 @@
 build:
-	go build -o bin/uman ./cmd/main.go
+	go build -o bin/uman ./main.go
 
-run:
+run: build
 	./bin/uman test.um
